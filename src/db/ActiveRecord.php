@@ -8,7 +8,7 @@ use beco\yii\db\exceptions\ModelNotSaved;
 
 abstract class ActiveRecord extends YiiActiveRecord {
 
-  public static function getOrCreate(array $conditions, array $attributes = []):self {
+  public static function getOrCreate(array $conditions, array $attributes = [], $force = false):self {
     $model = static::find()->where($conditions)->all();
 
     if(count($model) > 1) {
@@ -19,7 +19,7 @@ abstract class ActiveRecord extends YiiActiveRecord {
       $model = new static;
       $model->setAttributes($conditions);
       $model->setAttributes($attributes);
-      if(!$model->save()) {
+      if(!$model->save(!$force)) {
         throw new ModelNotSaved(sprintf("Cannot create %s, errors: %s",
           static::class,
           json_encode($model->errors)

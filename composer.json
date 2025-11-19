@@ -7,6 +7,9 @@
     "php": ">=8.0",
     "yiisoft/yii2": "^2.0"
   },
+  "extra": {
+    "bootstrap": "beco\\yii\\Bootstrap"
+  },
   "autoload": {
     "psr-4": {
       "beco\\yii\\": "src/"
