@@ -3,18 +3,24 @@
 namespace beco\yii\db;
 
 use yii\db\ActiveRecord as YiiActiveRecord;
+use beco\db\exceptions\MultipleRecordsFoundWhenOnlyOneIsExpceted;
+use beco\db\exceptions\ModelNotSaved;
 
 abstract class ActiveRecord extends YiiActiveRecord {
 
   public static function getOrCreate(array $conditions, array $attributes = []):self {
-    $model = static::findOne($conditions);
+    $model = static::find()->where($conditions)->all();
+
+    if(count($model) > 1) {
+      throw new MultipleRecordsFoundWhenOnlyOneIsExpceted();
+    }
 
     if(empty($model)) {
       $model = new static;
       $model->setAttributes($conditions);
       $model->setAttributes($attributes);
       if(!$model->save()) {
-        throw new RuntimeException(sprintf("Cannot create %s, errors: %s",
+        throw new ModelNotSaved(sprintf("Cannot create %s, errors: %s",
           static::class,
           json_encode($model->errors)
         ));
