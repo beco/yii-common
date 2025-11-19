@@ -25,8 +25,8 @@ abstract class ActiveRecord extends YiiActiveRecord {
           json_encode($model->errors)
         ));
       }
-      return $model;
     }
+    return $model;
   }
 
   public function beforeSave($insert) {
