@@ -1,7 +1,7 @@
 {
   "name": "beco/yii-common",
   "description": "Common Yii2 base ActiveRecord and helpers",
-  "type": "library",
+  "type": "yii2-extension",
   "license": "MIT",
   "require": {
     "php": ">=8.0",
