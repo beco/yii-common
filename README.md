@@ -21,3 +21,9 @@ abstract class ActiveRecord extends BaseActiveRecord {
     // - Nombre de conexión si difiere, etc.
 }
 ```
+
+# To do
+- automatic start for new projects
+- database backup
+- queue
+- beat

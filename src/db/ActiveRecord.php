@@ -35,11 +35,11 @@ abstract class ActiveRecord extends YiiActiveRecord {
     }
 
     if($insert && $this->hasAttribute('created_at')) {
-      $this->created_at = date('Y-m-s H:i:s');
+      $this->created_at = date('Y-m-d H:i:s');
     }
 
     if($this->hasAttribute('updated_at')) {
-      $this->updated_at = date('Y-m-s H:i:s');
+      $this->updated_at = date('Y-m-d H:i:s');
     }
 
     if($this->hasAttribute('uid')) {
