@@ -6,7 +6,7 @@ use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
-class System extends Controller {
+class SystemController extends Controller {
 
   /**
    * Prints this system's to connect it's db.
