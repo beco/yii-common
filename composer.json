@@ -1,13 +1,15 @@
 {
   "name": "beco/yii-common",
-  "description": "Common Yii2 base ActiveRecord classes and traits",
+  "description": "Common Yii2 base ActiveRecord and helpers",
   "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.0",
+    "yiisoft/yii2": "^2.0"
+  },
   "autoload": {
     "psr-4": {
       "beco\\yii\\": "src/"
     }
-  },
-  "require": {
-    "yiisoft/yii2": "^2.0"
   }
 }
