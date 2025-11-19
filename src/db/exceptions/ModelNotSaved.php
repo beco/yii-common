@@ -1,6 +1,6 @@
 <?php
 
-namespace beco\db\exceptions;
+namespace beco\yii\db\exceptions;
 
 use Exception;
 

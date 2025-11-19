@@ -3,8 +3,8 @@
 namespace beco\yii\db;
 
 use yii\db\ActiveRecord as YiiActiveRecord;
-use beco\db\exceptions\MultipleRecordsFoundWhenOnlyOneIsExpceted;
-use beco\db\exceptions\ModelNotSaved;
+use beco\yii\db\exceptions\MultipleRecordsFoundWhenOnlyOneIsExpceted;
+use beco\yii\db\exceptions\ModelNotSaved;
 
 abstract class ActiveRecord extends YiiActiveRecord {
 
