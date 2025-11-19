@@ -1,0 +1,45 @@
+<?php
+
+namespace beco\yii\db;
+
+use yii\db\ActiveRecord as YiiActiveRecord;
+
+abstract class ActiveRecord extends YiiActiveRecord {
+
+  public static function getOrCreate(array $conditions, array $attributes = []):self {
+    $model = static::findOne($conditions);
+
+    if(empty($model)) {
+      $model = new static;
+      $model->setAttributes($conditions);
+      $model->setAttributes($attributes);
+      if(!$model->save()) {
+        throw new RuntimeException(sprintf("Cannot create %s, errors: %s",
+          static::class,
+          json_encode($model->errors)
+        ));
+      }
+      return $model;
+    }
+  }
+
+  public function beforeSave($insert) {
+    if(!parent::beforeSave($insert)) {
+      return false;
+    }
+
+    if($insert && $this->hasAttribute('created_at')) {
+      $this->created_at = date('Y-m-s H:i:s');
+    }
+
+    if($this->hasAttribute('updated_at')) {
+      $this->updated_at = date('Y-m-s H:i:s');
+    }
+
+    if($this->hasAttribute('uid')) {
+      $this->uid = uniqid();
+    }
+
+    return true;
+  }
+}
