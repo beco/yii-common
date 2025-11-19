@@ -20,4 +20,30 @@ class System extends Controller {
     );
     return ExitCode::OK;
   }
+
+  /**
+   * Simple healthcheck.
+   *
+   * ./yii system/ping
+   */
+  public function actionPing(): int
+    {
+        $this->stdout("pong\n");
+        return ExitCode::OK;
+    }
+
+    /**
+     * Muestra información básica del entorno de la app.
+     *
+     * ./yii system/info
+     */
+    public function actionInfo(): int
+    {
+        $this->stdout("App ID: " . Yii::$app->id . "\n");
+        $this->stdout("Environment: " . (defined('YII_ENV') ? YII_ENV : 'unknown') . "\n");
+        $this->stdout("Debug: " . (defined('YII_DEBUG') && YII_DEBUG ? 'true' : 'false') . "\n");
+        $this->stdout("Base Path: " . Yii::getAlias('@app') . "\n");
+
+        return ExitCode::OK;
+    }
 }
