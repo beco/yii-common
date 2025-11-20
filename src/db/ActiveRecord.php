@@ -8,12 +8,14 @@ use beco\yii\db\exceptions\ModelNotSaved;
 
 abstract class ActiveRecord extends YiiActiveRecord {
 
-  public static function getOrCreate(array $conditions, array $attributes = [], $force = false):self {
+  public static function getOrCreate(array $conditions, array $attributes = [], $force = false):self|null {
     $model = static::find()->where($conditions)->all();
 
-    if(count($model) > 1) {
+    if(is_array($model) && count($model) > 1) {
       throw new MultipleRecordsFoundWhenOnlyOneIsExpceted();
     }
+
+    $model = $model[0] ?? null;
 
     if(empty($model)) {
       $model = new static;
@@ -25,6 +27,19 @@ abstract class ActiveRecord extends YiiActiveRecord {
           json_encode($model->errors)
         ));
       }
+    }
+
+    return $model;
+  }
+
+  public static function createOrUpdate(array $conditions, array $attributes) {
+    $model = self::getOrCreate($conditions);
+    $model->setAttributes($attributes);
+    if(!$model->save()) {
+      throw new ModelNotSaved(sprintf("Cannot save %s, errors: %s",
+        static::class,
+        json_encode($model->errors)
+      ));
     }
     return $model;
   }
@@ -42,7 +57,7 @@ abstract class ActiveRecord extends YiiActiveRecord {
       $this->updated_at = date('Y-m-d H:i:s');
     }
 
-    if($this->hasAttribute('uid')) {
+    if($this->hasAttribute('uid') && empty($this->uid)) {
       $this->uid = uniqid();
     }
 

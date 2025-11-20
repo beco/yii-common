@@ -4,6 +4,14 @@ Common Stuff for Yii2 Projects
 # Instalation
 `composer require beco/yii-common:dev-main`
 
+## Provides
+- `beco\yii\db\ActiveRecord`:
+- `beco\yii\models\User`: a basic user model (and its migration)
+- `beco\yii\commands\SystemCommand`: a command for
+ - db backup
+ - system check
+
+# Info
 
 Then, in order to get some local handling use intermediate classes:
 
@@ -24,6 +32,6 @@ abstract class ActiveRecord extends BaseActiveRecord {
 
 # To do
 - automatic start for new projects
-- database backup
+- ~database backup~
 - queue
 - beat
