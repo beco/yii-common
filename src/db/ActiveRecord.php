@@ -93,7 +93,6 @@ abstract class ActiveRecord extends YiiActiveRecord {
 
 
         $snake = Inflector::camel2id($baseProp, '_'); // "starts_at"
-        echo "snake: {$snake}\n";
 
         if ($this->hasAttribute($snake)) {
           $raw = $this->getAttribute($snake);
