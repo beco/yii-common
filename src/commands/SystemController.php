@@ -3,6 +3,7 @@
 namespace beco\yii\commands;
 
 use Yii;
+use RuntimeException;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\FileHelper;
@@ -222,8 +223,6 @@ class SystemController extends Controller {
 
     $firstRun = !file_exists(Yii::getAlias('@app/runtime/yii-common-setup.txt'));
 
-    $vars = [];
-
     $this->stdout(sprintf("First run: %s\n", $firstRun?'TRUE':'FALSE'));
 
     // 1) Asegurar directorio de backups
@@ -279,12 +278,42 @@ TXT;
         'origin' => $templatesDir . DIRECTORY_SEPARATOR . 'variables_local.template',
         'destination' => Yii::getAlias('@app/local/variables_local.sh'),
         'overwrite' => false,
+        'type' => 'render',
+        'vars' => [
+          'salt' => StringUtils::generate(60),
+        ],
+        'onlyFirstRun' => true,
       ],
       'rbac_controller' => [
         'origin' => $templatesDir . DIRECTORY_SEPARATOR . 'RbacController.template',
         'destination' => Yii::getAlias('@app/commands/RbacController.php'),
         'overwrite' => false,
-      ]
+      ],
+      'web_index' => [
+        'origin' => $templatesDir . DIRECTORY_SEPARATOR . 'index.template',
+        'destination' => Yii::getAlias('@app/web/index.php'),
+        'overwrite' => true,
+      ],
+      'web_config' => [
+        'origin' => $templatesDir . DIRECTORY_SEPARATOR . 'web_config.template',
+        'destination' => Yii::getAlias('@app/config/web.php'),
+        'overwrite' => true,
+        'type' => 'render',
+        'vars' => [
+          'cookie_validation' => StringUtils::generate(40),
+        ],
+        'onlyFirstRun' => true,
+      ],
+      'console_config' => [
+        'origin' => $templatesDir . DIRECTORY_SEPARATOR . 'console_config.template',
+        'destination' => Yii::getAlias('@app/config/console.php'),
+        'overwrite' => false,
+      ],
+    ];
+
+    $variables = [
+      'cookie_validation' => StringUtils::generate(30),
+      'salt' => StringUtils::generate(60),
     ];
 
     foreach ($file_templates as $key => $file) {
@@ -315,15 +344,20 @@ TXT;
       }
 
       // 4) Copiar el archivo
-      if (!copy($origin, $destination)) {
-        $this->stderr("Failed to copy {$origin} to {$destination}\n");
-        continue;
+      if(empty($file['type']) || $file['type'] === 'copy') {
+        if (!copy($origin, $destination)) {
+          $this->stderr("Failed to copy {$origin} to {$destination}\n");
+          continue;
+        }
+      } elseif($file['type'] === 'render') {
+        $content = $this->renderTemplate($origin, $file['vars']);
+        $this->writeFile($destination, $content);
       }
+
 
       $this->stdout("Created {$destination} from template {$origin}\n");
     }
 
-    $this->stdout(sprintf("Here you have a randomd 80 chars string: \n%s\n", StringUtils::generate(80)));
     $this->stdout("Setup finished.\n");
     return ExitCode::OK;
   }
@@ -348,4 +382,31 @@ TXT;
 
     return ExitCode::OK;
   }
+
+  private function renderTemplate(string $origin, array $vars = []): string {
+    if (!file_exists($origin)) {
+      throw new RuntimeException("Template not found: {$origin}");
+    }
+
+    $content = file_get_contents($origin);
+
+    // reemplazar {{key}} → value
+    foreach ($vars as $key => $value) {
+      $content = str_replace('{{' . $key . '}}', $value, $content);
+    }
+
+    return $content;
+  }
+
+  private function writeFile(string $destination, string $content): void {
+    $dir = dirname($destination);
+
+    if (!is_dir($dir)) {
+      FileHelper::createDirectory($dir);
+    }
+
+    file_put_contents($destination, $content);
+  }
+
+
 }

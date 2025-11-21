@@ -39,6 +39,8 @@ abstract class User extends ActiveRecord implements IdentityInterface {
       ['blocked', 'default', 'value' => 0],
       ['password_open', 'safe'],
       ['password_open', 'string', 'min' => 6],
+      ['password_open', 'required', 'on' => self::SCENARIO_SIGNUP],
+      ['otp', 'string'],
       ['last_login', 'datetime', 'format' => 'php:Y-m-d H:i:s'],
       ['password_open_repeat', 'compare', 'compareAttribute' => 'password_open', 'on' => self::SCENARIO_SIGNUP],
     ];
@@ -61,17 +63,16 @@ abstract class User extends ActiveRecord implements IdentityInterface {
 
   public function beforeSave($insert) {
     if(!empty($this->password_open)) {
-      $this->password = $this->ofuscatePassword($this->password_open);
+      $this->password = Yii::$app->security->generatePasswordHash($this->password_open);
+    }
+    if(empty($this->auth_key)) {
+      $this->auth_key = Yii::$app->security->generateRandomString();
     }
     return parent::beforeSave($insert);
   }
 
-  public function ofuscatePassword($password) {
-    return Yii::$app->security->generatePasswordHash($password);
-  }
-
-  public function checkPassword($candidate) {
-    return $this->password === $this->ofuscatePassword($candidate);
+  public function validatePassword($candidate) {
+    return Yii::$app->security->validatePassword($candidate, $this->password);
   }
 
   public function canLogin():bool {
@@ -95,7 +96,11 @@ abstract class User extends ActiveRecord implements IdentityInterface {
   }
 
   public function getAuthKey() {
-    return $this->authKey;
+    return $this->auth_key;
+  }
+
+  public function getUsername() {
+    return $this->name;
   }
 
   public function validateAuthKey($authKey) {
@@ -104,5 +109,9 @@ abstract class User extends ActiveRecord implements IdentityInterface {
 
   public function toString() {
     return sprintf('[%d] %s (%s)', $this->id, $this->name ?? 'sin nombre', $this->email);
+  }
+
+  public static function findByEmail($email) {
+    return self::findOne(['email' => $email]);
   }
 }

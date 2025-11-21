@@ -12,6 +12,7 @@
     "yiisoft/yii2-httpclient": "*",
     "raoul2000/yii2-workflow": "*",
     "skeeks/yii2-mobile-detect": "^1.0",
+    "yiisoft/yii2-queue":"^2.3",
     "mailgun/mailgun-php": "^3"
   },
   "extra": {
