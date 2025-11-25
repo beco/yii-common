@@ -43,9 +43,7 @@ If you have a field which is a date or a datetime column in mysql, aka
 2. `$model->starts_atRelative` returns how much time is left for such date in a human way
 3. `$model->starts_atDateTime` a `\DateTime` representation of such date
 
-So, if you create a `getStartsAt()` to translate snake_case into CamelCase as
-Yii practices, you also have, directly, `getStartsAtHuman`, `getStartsAtRelative`
-and `getStartsAtDateTime`.
+Automatically you also have `starts_atHuman` and `startsAtHuman`.
 
 # Info
 
@@ -58,14 +56,25 @@ namespace app\models;
 use beco\yii\db\ActiveRecord as BaseActiveRecord;
 
 abstract class ActiveRecord extends BaseActiveRecord {
-    // Aquí puedes meter lógica específica de ESTE proyecto
-    // por ejemplo:
-    // - Comportamientos específicos
-    // - Scope por tenant
-    // - Nombre de conexión si difiere, etc.
+
 }
 ```
 
+# Changelog
+
+## v0.1.2
+- add `extra` (json) to users
+- return null if date_time candidate's value is null
+- minor fixes in relative time display
+- add queue and mutex at composer level
+- improved console and web config scritps
+- includes Telegram basic client, command, migration and encapsulated response object
+- all ActiveRecord are loggable
+
 # To do
-- scheduler and beat
-- `beco\yii\db\LoggableActiveRecord`
+[] separate `system/new` from `system/setup` only for config files rather than code files
+[x] add LoginForm to templates
+[] scheduler and beat
+[x] ~`beco\yii\db\LoggableActiveRecord`~ include log capabilites to all ActiveRecord
+[] improve documentation
+[] should all tables from this packages be `beco_table_name`?

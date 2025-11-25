@@ -62,15 +62,15 @@ class DateUtils {
     // Parte del día
     $hour = (int)$target->format('H');
     $part = match(true) {
-      $hour < 6  => 'madrugada',
-      $hour < 12 => 'mañana',
-      $hour < 14 => 'mediodía',
-      $hour < 19 => 'tarde',
-      default    => 'noche',
+      $hour < 6  => 'en la madrugada',
+      $hour < 12 => 'en la mañana',
+      $hour < 14 => 'al mediodía',
+      $hour < 19 => 'en la tarde',
+      default    => 'en la noche',
     };
 
     // Función helper para agregar parte del día
-    $withPart = fn(string $base) => "{$base} en la {$part}";
+    $withPart = fn(string $base) => "{$base} {$part}";
     $withPastPart = fn(string $base) => "hace {$base}";
 
     return match ($diff) {

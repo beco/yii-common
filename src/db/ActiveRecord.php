@@ -2,6 +2,7 @@
 
 namespace beco\yii\db;
 
+use Yii;
 use DateTime;
 use DateTimeInterface;
 use yii\helpers\Inflector;
@@ -9,12 +10,60 @@ use yii\db\ActiveRecord as YiiActiveRecord;
 use beco\yii\db\exceptions\MultipleRecordsFoundWhenOnlyOneIsExpceted;
 use beco\yii\db\exceptions\ModelNotSaved;
 use beco\yii\utils\DateUtils;
+use beco\yii\models\ModelLog;
 
 abstract class ActiveRecord extends YiiActiveRecord {
 
+
+  /**
+   * Override this function in any ActiveRecord class to automatically log attributes' changes
+   */
+  public function logChanges():bool {
+    return false;
+  }
+
+  /**
+   * Override this function with the names of the attributes to be logged
+   */
+  public function getLoggableAttributes():array {
+    return [];
+  }
+
   private array $_virtualCache = [];
 
-  public static function getOrCreate(array $conditions, array $attributes = [], $force = false):self|null {
+  public function afterSave($insert, $attributes) {
+    if($this->logChanges() == true) {
+      $this->registerChanges($this, $attributes);
+    }
+  }
+
+  /**
+   *
+   */
+  public function registerChanges($attributes, $insert = null) {
+    $old = [];
+    $new = [];
+    foreach($this->loggableAttributes as $attr) {
+      if(!$this->hasAttribute($attr)) {
+        throw new Exception(sprintf("attribute %s not in %s", $attr, static::class));
+      }
+      if(!empty($this->getAttribute($attr)) || !empty($attributes[$attr])) {
+        $old[$attr] = $attributes[$attr] ?? null;
+        $new[$attr] = $this->getAttribute($attr) ?? null;
+      }
+    }
+
+    $l = new ModelLog;
+    $l->model_class = static::class;
+    $l->model_id = $this->id;
+    $l->user_id = Yii::$app->user->id ?? null;
+    $l->action = $insert ? 'insert':'update';
+    $l->old_values = $old;
+    $l->new_values = $new;
+    $l->save();
+  }
+
+  public static function getOrCreate(array $conditions, array $attributes = [], $force = false):static|null {
     $model = static::find()->where($conditions)->all();
 
     if(is_array($model) && count($model) > 1) {
@@ -39,7 +88,7 @@ abstract class ActiveRecord extends YiiActiveRecord {
   }
 
   public static function createOrUpdate(array $conditions, array $attributes) {
-    $model = self::getOrCreate($conditions);
+    $model = static::getOrCreate($conditions);
     $model->setAttributes($attributes);
     if(!$model->save()) {
       throw new ModelNotSaved(sprintf("Cannot save %s, errors: %s",
@@ -111,7 +160,9 @@ abstract class ActiveRecord extends YiiActiveRecord {
         }
       }
 
-      if($value instanceof DateTimeInterface) {
+      if (empty($value)) {
+        return null;
+      } elseif ($value instanceof DateTimeInterface) {
         $value = $value;
       } elseif (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
         $value = new DateTime($value);

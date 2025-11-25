@@ -1,6 +1,6 @@
 {
   "name": "beco/yii-common",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Common Yii2 base ActiveRecord and helpers",
   "type": "yii2-extension",
   "license": "MIT",
@@ -11,6 +11,7 @@
     "yiisoft/yii2-bootstrap5": "~2.0.2",
     "yiisoft/yii2-smarty": "^2.0",
     "yiisoft/yii2-httpclient": "*",
+    "yiisoft/mutex":"*",
     "raoul2000/yii2-workflow": "*",
     "skeeks/yii2-mobile-detect": "^1.0",
     "yiisoft/yii2-queue":"^2.3",

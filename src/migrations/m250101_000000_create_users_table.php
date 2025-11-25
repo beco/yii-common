@@ -27,6 +27,8 @@ class m250101_000000_create_users_table extends Migration {
       'otp' => $this->string(),
       'otp_expiration' => $this->integer(),
       'chat_id' => $this->integer(), //telegram
+      'extra' => $this->json, // Full json object for each project's purposes
+      'roles' => $this->json, // Meant to be a json array ['client', 'operator', ...]
       'last_login' => $this->timestamp(),
       'created_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
       'updated_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP')->append('on update current_timestamp'),

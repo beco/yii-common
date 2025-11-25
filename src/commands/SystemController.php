@@ -22,7 +22,7 @@ class SystemController extends Controller {
   public $commands = [
     'users' => [
       'command' => 'migrate',
-      'question' => 'Shall I run Users migration?',
+      'question' => 'Shall I run Users and Telegram migration?',
       'params' => [
         'migrationNamespaces' => 'beco\yii\migrations',
         'interactive' => false,
@@ -219,6 +219,12 @@ class SystemController extends Controller {
   }
 
   public function actionSetup(): int {
+    if(!YII_ENV_DEV) {
+      $this->stdout("This environment is not DEV, aborting.\n");
+      return ExitCode::UNSPECIFIED_ERROR;
+    }
+    echo YII_ENV;
+    return 1;
     $this->stdout("Running yii-common setup...\n");
 
     $firstRun = !file_exists(Yii::getAlias('@app/runtime/yii-common-setup.txt'));

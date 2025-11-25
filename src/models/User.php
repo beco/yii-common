@@ -41,6 +41,7 @@ abstract class User extends ActiveRecord implements IdentityInterface {
       ['password_open', 'string', 'min' => 6],
       ['password_open', 'required', 'on' => self::SCENARIO_SIGNUP],
       ['otp', 'string'],
+      ['extra', 'safe'],
       ['last_login', 'datetime', 'format' => 'php:Y-m-d H:i:s'],
       ['password_open_repeat', 'compare', 'compareAttribute' => 'password_open', 'on' => self::SCENARIO_SIGNUP],
     ];
@@ -58,6 +59,14 @@ abstract class User extends ActiveRecord implements IdentityInterface {
       'email_verification_token' => 'código de verificación',
       'email_verification_token_expiration' => 'fecha de expiración',
       'email_verified' => 'correo electrónico verificado',
+      'is_admin' => 'admin',
+      'roles' => 'Roles',
+    ];
+  }
+
+  public function attributeHints() {
+    return [
+      'is_admin' => '¡Cuidado!',
     ];
   }
 
@@ -79,11 +88,36 @@ abstract class User extends ActiveRecord implements IdentityInterface {
     return !empty($this->password) && $this->blocked == 0;
   }
 
-  public function getIsAdmin() {
+  public function getIsAdmin():bool {
     return $this->is_admin == 1;
   }
 
-  public function hasPassword() {
+  public function getRoles() {
+    if(is_array($this->roles)) {
+      $roles = $this->roles;
+      if($this->isAdmin) {
+        array_unsifht('admin', $roles);
+      }
+      return $roles;
+    }
+    return [];
+  }
+
+  public function hasRole($role):bool {
+    return in_array($role, $this->getRoles());
+  }
+
+  public function addRole($role):bool {
+    if($this->hasRole($role)) {
+      return true;
+    }
+    $roles = $this->getRoles();
+    array_unsifht($role, $roles);
+    $this->roles = $roles;
+    return $this->save(false);
+  }
+
+  public function hasPassword():bool {
     return !empty($this->password);
   }
 
@@ -107,11 +141,11 @@ abstract class User extends ActiveRecord implements IdentityInterface {
     return $this->authKey === $authKey;
   }
 
-  public function toString() {
+  public function toString():string {
     return sprintf('[%d] %s (%s)', $this->id, $this->name ?? 'sin nombre', $this->email);
   }
 
-  public static function findByEmail($email) {
-    return self::findOne(['email' => $email]);
+  public static function findByEmail($email):self {
+    return static::findOne(['email' => $email]);
   }
 }
