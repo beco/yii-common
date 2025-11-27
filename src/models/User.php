@@ -146,6 +146,6 @@ abstract class User extends ActiveRecord implements IdentityInterface {
   }
 
   public static function findByEmail($email):self|null {
-    return static::findOne(['email' => $email]);
+    return self::findOne(['email' => $email]);
   }
 }
