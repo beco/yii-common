@@ -5,7 +5,7 @@ namespace beco\yii\commands;
 use Yii;
 use yii\console\ExitCode;
 use yii\console\Controller;
-use beco\yii\modules\clients\TelegramClient;
+use beco\yii\modules\clients\telegram\TelegramClient;
 
 class TelegramController extends Controller {
 
@@ -32,5 +32,11 @@ class TelegramController extends Controller {
       echo $key . ": " . $value . "\n";
     }
     return ExitCode::OK;
+  }
+
+  public function actionSend($chat_id, $text) {
+    $tg = new TelegramClient();
+    $res = $tg->sendMessage($chat_id, $text);
+    var_dump($res);
   }
 }

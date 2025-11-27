@@ -27,6 +27,11 @@ class TelegramMessage extends ActiveRecord {
     return $this->id;
   }
 
+  public function logChanges():bool {
+    return !empty(Yii::$app->params['beco']['TelegramMessage']['logChanges']) &&
+      Yii::$app->params['beco']['TelegramMessage']['logChanges'] == 1;
+  }
+
   public static function createFromUpdate($update, $direction = 'inbound') {
 
     if(!is_array($update)) {

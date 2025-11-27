@@ -5,6 +5,7 @@ namespace beco\yii\modules\clients\telegram;
 use Yii;
 use Exception;
 use yii\httpclient\Client;
+use yii\httpclient\CurlTransport;
 
 class TelegramClient {
   private static $telegram_api = "api.telegram.org";
@@ -16,6 +17,16 @@ class TelegramClient {
     }
     $this->client = new Client([
       'baseUrl' => sprintf("https://%s/bot%s", self::$telegram_api, Yii::$app->params['telegram_bot_token']),
+      'transport' => CurlTransport::class,
+      'requestConfig' => [
+        'format' => Client::FORMAT_JSON,
+        'options' => [
+            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4, // o CURL_IPRESOLVE_V6
+        ],
+      ],
+      'responseConfig' => [
+        'format' => Client::FORMAT_JSON
+      ],
     ]);
   }
 
@@ -31,7 +42,15 @@ class TelegramClient {
   }
 
   public function sendMessage($chat_id, $message, $extra = []) {
-
+    $payload = [
+      'chat_id' => $chat_id,
+      'text' => $message,
+    ];
+    $res = $this->client
+      ->post('sendMessage')
+      ->setData($payload)
+      ->send();
+    return new TelegramResult($res);
   }
 
 }
