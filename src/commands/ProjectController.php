@@ -9,7 +9,7 @@ use yii\console\ExitCode;
 use yii\helpers\FileHelper;
 use beco\yii\utils\StringUtils;
 
-class SystemController extends Controller {
+class ProjectController extends Controller {
 
   /**
    * Tablas a excluir del backup (se pasan como --exclude=table1,table2,...)

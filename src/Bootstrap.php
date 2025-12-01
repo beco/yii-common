@@ -10,8 +10,8 @@ class Bootstrap implements BootstrapInterface {
   public function bootstrap($app) {
     // Solo aplicar si es consola
     if ($app instanceof ConsoleApplication) {
-      $app->controllerMap['system'] = [
-        'class' => \beco\yii\commands\SystemController::class,
+      $app->controllerMap['project'] = [
+        'class' => \beco\yii\commands\ProjectController::class,
       ];
       $app->controllerMap['telegram'] = [
         'class' => \beco\yii\commands\TelegramController::class,

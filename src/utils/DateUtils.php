@@ -57,7 +57,16 @@ class DateUtils {
     $targetDate    = (clone $target)->setTime(0, 0, 0);
     $referenceDate = (clone $reference)->setTime(0, 0, 0);
 
-    $diff = (int)$referenceDate->diff($targetDate)->format('%r%a'); // días firmados
+    $diff = (int)$referenceDate->diff($targetDate)->format('%r%a'); // días con signo
+    $diff_m = (int)$referenceDate->diff($targetDate)->format('%r%i');
+
+    if($diff == 0 && abs($diff_m) < 30) {
+      if($diff_m < 0) {
+        return sprintf("hace unos momentos");
+      } else {
+        return sprintf("en unos momentos");
+      }
+    }
 
     // Parte del día
     $hour = (int)$target->format('H');
