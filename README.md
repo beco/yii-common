@@ -62,6 +62,9 @@ abstract class ActiveRecord extends BaseActiveRecord {
 
 # Changelog
 
+## v0.1.5
+- beats more info [here](https://beco.notion.site/Beat-for-Yii2-Queue-2bdc428da03b8028b9c4f0eb2ceb0110)
+
 ## v0.1.2
 - add `extra` (json) to users
 - return null if date_time candidate's value is null

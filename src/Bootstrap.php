@@ -16,6 +16,9 @@ class Bootstrap implements BootstrapInterface {
       $app->controllerMap['telegram'] = [
         'class' => \beco\yii\commands\TelegramController::class,
       ];
+      $app->controllerMap['beat'] = [
+        'class' => \beco\yii\commands\BeatController::class,
+      ];
     }
   }
 }

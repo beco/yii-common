@@ -1,6 +1,6 @@
 {
   "name": "beco/yii-common",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Common Yii2 base ActiveRecord and helpers",
   "type": "yii2-extension",
   "license": "MIT",

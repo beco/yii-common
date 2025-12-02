@@ -1,6 +1,6 @@
 <?php
 
-namespace beco\yii\migrations;
+namespace beco\yii\modules\clients\telegram\migrations;
 
 use yii\db\Migration;
 
