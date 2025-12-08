@@ -2,6 +2,7 @@
 
 namespace beco\yii\web;
 
+use Yii;
 use yii\web\Application as BaseApplication;
 use yii\helpers\Html;
 use yii\helpers\Url;
