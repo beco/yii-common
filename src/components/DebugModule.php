@@ -1,6 +1,6 @@
 <?php
 // components/DebugModule.php
-namespace app\components;
+namespace beco\yii\components;
 
 use Yii;
 
