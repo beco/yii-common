@@ -193,7 +193,7 @@ abstract class ActiveRecord extends YiiActiveRecord {
    * además de $model->getStartsAtRelative()
    */
   public function __get($name) {
-    if (preg_match('/^(.+?)(Relative|Human)$/', $name, $matches)) {
+    if (preg_match('/^(.+?)(Relative|Human|DateTime)$/', $name, $matches)) {
       $baseProp = $matches[1];      // "startsAt"
       $suffix   = $matches[2];      // "Relative" | "Human"
 
@@ -204,6 +204,14 @@ abstract class ActiveRecord extends YiiActiveRecord {
     }
 
     return parent::__get($name);
+  }
+
+  public static function getDropdownOptions($column = 'name', $conditions = []) {
+    $r = [];
+    foreach(self::find()->where($conditions)->all() as $item) {
+      $r[$item->id] = $item->getAttribute($column);
+    }
+    return $r;
   }
 
 }

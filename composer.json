@@ -1,6 +1,6 @@
 {
   "name": "beco/yii-common",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Common Yii2 base ActiveRecord and helpers",
   "type": "yii2-extension",
   "license": "MIT",
@@ -15,6 +15,7 @@
     "raoul2000/yii2-workflow": "*",
     "skeeks/yii2-mobile-detect": "^1.0",
     "yiisoft/yii2-queue":"^2.3",
+    "yiisoft/yii2-debug": "~2.1.0",
     "mailgun/mailgun-php": "^3"
   },
   "extra": {

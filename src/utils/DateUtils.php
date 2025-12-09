@@ -58,7 +58,8 @@ class DateUtils {
     $referenceDate = (clone $reference)->setTime(0, 0, 0);
 
     $diff = (int)$referenceDate->diff($targetDate)->format('%r%a'); // días con signo
-    $diff_m = (int)$referenceDate->diff($targetDate)->format('%r%i');
+    $diff_m = $reference->getTimestamp() - $target->getTimestamp();
+    $diff_m = $diff_m * 60;
 
     if($diff == 0 && abs($diff_m) < 30) {
       if($diff_m < 0) {
