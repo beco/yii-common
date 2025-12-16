@@ -3,6 +3,7 @@
 namespace beco\yii\db;
 
 use Yii;
+use Exception;
 use DateTime;
 use DateTimeInterface;
 use yii\helpers\Inflector;
@@ -11,6 +12,7 @@ use beco\yii\db\exceptions\MultipleRecordsFoundWhenOnlyOneIsExpceted;
 use beco\yii\db\exceptions\ModelNotSaved;
 use beco\yii\utils\DateUtils;
 use beco\yii\models\ModelLog;
+use beco\yii\models\Image;
 
 abstract class ActiveRecord extends YiiActiveRecord {
 
@@ -136,7 +138,6 @@ abstract class ActiveRecord extends YiiActiveRecord {
       $getter = 'get' . $baseCamel;
       if (method_exists($this, $getter)) {
         $value = $this->$getter(...$params);
-        echo "value: {$value}\n";
       } else {
         // 3) Si no hay getter, intentar ir directo al atributo BD: starts_at
 
@@ -204,6 +205,52 @@ abstract class ActiveRecord extends YiiActiveRecord {
     }
 
     return parent::__get($name);
+  }
+
+  public function addImage($attribute, $file_path, $overwrite = false) {
+    $past = Image::findOne(['model' => $this::class, 'model_id' => $this->id, 'attribute' => $attribute]);
+    if(!empty($past)) {
+      if($overwrite == true) {
+        $past->delete();
+      } else {
+        Yii::warning(['msg' => 'image set to overwrite but not permitted']);
+        return $past;
+      }
+    }
+    $i = new Image;
+    $i->model = static::class;
+    $i->attribute = $attribute;
+    $i->model_id = $this->id;
+    $i->path = $file_path;
+    if($i->save()) {
+      return $i;
+    }
+    throw new Exception("image not saved: " . json_encode($i->errors));
+  }
+
+  public function getImages() {
+    $images = Image::find()->where(['model' => static::class, 'model_id' => $this->id])->all();
+    $r = [];
+    foreach($images as $image) {
+      $r[$image->attribute] = $image;
+    }
+    return $r;
+  }
+
+  public function getImage($attribute) {
+    return Image::findOne(['model' => static::class, 'model_id' => $this->id, 'attribute' => $attribute]);
+  }
+
+  public function hasImage($attribute) {
+    return !empty($this->getImage($attribute));
+  }
+
+  public function getImageUrl($attribute) {
+    $i = $this->getImage($attribute);
+    if(empty($i)) {
+      return null;
+    }
+    return $i->url;
   }
 
   public static function getDropdownOptions($column = 'name', $conditions = []) {
